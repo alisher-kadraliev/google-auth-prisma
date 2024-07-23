@@ -1,4 +1,5 @@
 
+import { ModeToggle } from "@/components/ModeToggle"
 import NavList from "./NavList"
 import UserInfo from "./UserInfo"
 
@@ -18,6 +19,7 @@ const Navbar = () => {
                         </div>
                     </form> */}
             </div>
+            <ModeToggle />
             <UserInfo />
         </header>
     )

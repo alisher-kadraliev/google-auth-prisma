@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import {
-    Home, Menu, Package2
+    Home, Menu, Triangle
 } from "lucide-react"
 import { usePathname } from 'next/navigation'
 
@@ -29,7 +29,7 @@ const NavList = () => {
                         href="#"
                         className="flex items-center gap-2 text-lg font-semibold"
                     >
-                        <Package2 className="h-6 w-6" />
+                        <Triangle className="size-5 fill-foreground" />
                         <span className="sr-only">Acme Inc</span>
                     </Link>
                     <Link
