@@ -1,16 +1,11 @@
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { DataTable } from './data-table'
-import { Blogs, columns } from './column'
+import { columns } from './column'
 import db from '@/lib/db'
 
-export async function getData(): Promise<Blogs[]> {
-    const data = await db.post.findMany()
-    return data
-}
 const BlogsPage = async () => {
-    const posts = await getData()
-    const data = posts.map((item) => { return { ...item, title: item.title, published: item.published } });
+    const data = await db.post.findMany();
     return (
         <div
             className="flex h-full justify-center rounded-lg border-2 p-6 shadow-sm"

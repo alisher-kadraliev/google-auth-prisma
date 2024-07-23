@@ -21,6 +21,12 @@ export type Blogs = {
     slug: string | null;
     published: boolean;
     authorId: string;
+    likes: number | null;
+    readingTime: number | null;
+    image: string | null;
+    imageAlt: string | null;
+    status: "pending" | "progess" | "completed";
+    watched: number | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -41,7 +47,7 @@ export const columns: ColumnDef<Blogs>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
-            const payment = row.original
+            const blogs = row.original
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
