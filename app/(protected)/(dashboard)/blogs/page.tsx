@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import React from 'react'
 
-const Dashboard = () => {
+const BlogsPage = () => {
     return (
         <div className='flex flex-1 flex-col gap-5'>
             <div
@@ -21,4 +21,4 @@ const Dashboard = () => {
     )
 }
 
-export default Dashboard
+export default BlogsPage
