@@ -31,14 +31,14 @@ const NavbarPc = () => {
                     <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                         <Link
                             href="/dashboard"
-                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary active:bg-slate-100 ${pathname === '/dashboard' ? 'text-primary scale-105' : 'text-muted-foreground'}`}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary active:bg-slate-100 dark:active:bg-slate-100/15 ${pathname === '/dashboard' ? 'text-primary scale-105' : 'text-muted-foreground'}`}
                         >
                             <Home className="h-4 w-4" />
                             Dashboard
                         </Link>
                         <Link
                             href="/blogs"
-                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary active:bg-slate-100 ${pathname === '/blogs' ? 'text-primary scale-105' : 'text-muted-foreground'}`}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary active:bg-slate-100 dark:active:bg-slate-100/15 ${pathname === '/blogs' ? 'text-primary scale-105' : 'text-muted-foreground'}`}
                         >
                             <ShoppingCart className="h-4 w-4" />
                             Blogs

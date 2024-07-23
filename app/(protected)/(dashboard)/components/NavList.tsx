@@ -34,7 +34,7 @@ const NavList = () => {
                     </Link>
                     <Link
                         href="#"
-                        className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground active:bg-slate-100 ${pathname === '/dashboard' ? 'text-primary scale-105' : 'text-muted-foreground'}`}
+                        className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground active:bg-slate-100 dark:active:bg-slate-100/15 ${pathname === '/dashboard' ? 'text-primary scale-105' : 'text-muted-foreground'}`}
 
                     >
                         <Home className="h-5 w-5" />
