@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <main
-            className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-slate-50"
+            className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-slate-50 dark:bg-slate-900"
         >
             <div className="w-full">
                 <div className="flex justify-between items-center py-4">
@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
                         }
                         className="max-w-sm"
                     />
-                    <Button ><Link href="/blogs/create">Add Blog</Link></Button>
+                    <Link href="/blogs/create">  <Button >Add Blog</Button></Link>
                 </div>
                 <div className="rounded-md border w-full">
                     <Table>

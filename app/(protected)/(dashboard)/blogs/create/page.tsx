@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CreatePostSchema } from '@/schemas/post'
 import { Button } from "@/components/ui/button"
 import * as z from 'zod'
+import { Loader2, ChevronLeft } from "lucide-react"
 
 import {
     Form,
@@ -39,8 +40,6 @@ import { useRouter } from 'next/navigation'
 
 const Create = () => {
     const [isPending, startTransition] = useTransition()
-    const [error, setError] = useState<string | undefined>("")
-    const [success, setSuccess] = useState<string | undefined>("")
     const router = useRouter()
 
     const form = useForm<z.infer<typeof CreatePostSchema>>({
@@ -59,17 +58,17 @@ const Create = () => {
         }
     })
 
-    const onSubmit = (values: z.infer<typeof CreatePostSchema>) => {
-        setError("")
-        setSuccess("")
-        startTransition(() => {
-            createPost(values)
-                .then((data) => {
-                    setError(data?.error)
-                    setSuccess(data?.success)
-                })
-        })
-    }
+    const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
+        startTransition(async () => {
+            const res = await createPost(values)
+            if (res?.success) {
+                toast.success(res.success, { duration: 5000 });
+                router.push("/blogs")
+            }
+
+        });
+
+    };
 
     useEffect(() => {
         const subscription = form.watch((value, { name }) => {
@@ -81,59 +80,69 @@ const Create = () => {
         return () => subscription.unsubscribe();
     }, [form.watch, form]);
 
-    if (error) {
-        toast.error(error)
-    }
 
-    if (success) {
-        toast.success(success)
-        router.push('/blogs')
-    }
+
+    const { title } = form.watch();
+
     return (
         <div
-            className="h-full rounded-lg border-2 shadow-sm bg-slate-50"
+            className="h-full rounded-lg border-2 shadow-sm bg-slate-50 dark:bg-slate-900"
         >
             <div className="flex flex-col gap-1 relative ">
 
-                <div className='bg-black rounded-xl w-full flex justify-around items-center p-3 sticky top-0 mb-4'>
-                    <Link href="/" >Back</Link>
-                    <Button type='submit' onClick={form.handleSubmit(onSubmit)} className='ml-auto' variant={'secondary'}>Submit</Button>
+                <div className='bg-black shadow-md rounded-xl w-full flex justify-between items-center p-3 sticky top-0 mb-4'>
+                    <Link href="/blogs" >
+                        <Button variant="outline" size="icon">
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                    </Link>
+                    <div className='text-white font-bold text-center text-2xl'>{title}</div>
+                    <Button type='submit' onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-white text-black hover:bg-white/80 disabled:opacity-1' variant={'default'}>
+                        {isPending ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait </> : <>Submit</>}
+                    </Button>
                 </div>
                 <div className='flex flex-col gap-10 px-7'>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Post Title</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Form {...form}>
-                                <form action="" onSubmit={form.handleSubmit(onSubmit)} className='space-y-6  px-6'>
-                                    <div className='grid-cols-2 grid justify-center items-center gap-4'>
+                    <Form {...form}>
+                        <form action="" onSubmit={form.handleSubmit(onSubmit)} className='space-y-6  px-6'>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Basic Information</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className='grid-cols-2 grid justify-center items-start gap-4'>
                                         <FormField
                                             control={form.control}
                                             name="title"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <div className='flex gap-5 items-center'>
-                                                        <FormLabel className='mb-4'>Title</FormLabel>  <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg' />
-                                                    </div>
+                                                    <FormLabel>Title</FormLabel>
                                                     <FormControl>
                                                         <Input disabled={isPending}  {...field} placeholder='Write your post title' type='text' />
                                                     </FormControl>
+                                                    <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                 </FormItem>
                                             )}
                                         />
+
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Basic Information</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className='grid-cols-2 grid justify-center items-start gap-4'>
                                         <FormField
                                             control={form.control}
                                             name="slug"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <div className='flex gap-5 items-center'>
-                                                        <FormLabel className='mb-4'>Slug</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive p-2 rounded-lg' />
-                                                    </div>
+                                                    <FormLabel>Slug</FormLabel>
                                                     <FormControl>
                                                         <Input disabled={isPending} {...field} placeholder='Write your post slug' type='text' value={field.value || ''} />
                                                     </FormControl>
+                                                    <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                 </FormItem>
                                             )}
                                         />
@@ -143,8 +152,8 @@ const Create = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <div className='flex gap-5 items-center'>
-                                                        <FormLabel className='mb-4'>Slug</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive p-2 rounded-lg' />
+                                                        <FormLabel>Slug</FormLabel>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                     </div>
                                                     <FormControl>
                                                         <Input disabled={isPending} {...field} placeholder='Write your post slug' type='text' value={field.value ?? ''} />
@@ -159,8 +168,8 @@ const Create = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <div className='flex gap-5 items-center'>
-                                                        <FormLabel className='mb-4'>Slug</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive p-2 rounded-lg' />
+                                                        <FormLabel>Slug</FormLabel>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                     </div>
                                                     <FormControl>
                                                         <Input disabled={isPending} {...field} placeholder='Write your post slug' type='number' />
@@ -174,8 +183,8 @@ const Create = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <div className='flex gap-5 items-center'>
-                                                        <FormLabel className='mb-4'>Slug</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive p-2 rounded-lg' />
+                                                        <FormLabel>Slug</FormLabel>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                     </div>
                                                     <FormControl>
                                                         <Input disabled={isPending} {...field} placeholder='Write your post slug' type='number' />
@@ -189,8 +198,8 @@ const Create = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <div className='flex gap-5 items-center'>
-                                                        <FormLabel className='mb-4'>Status</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive p-2 rounded-lg' />
+                                                        <FormLabel>Status</FormLabel>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                     </div>
                                                     <FormControl>
                                                         <select
@@ -208,32 +217,18 @@ const Create = () => {
                                                 </FormItem>
                                             )}
                                         />
-                                    </div>
-                                </form>
 
-                            </Form>
-                        </CardContent>
-                    </Card>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </form>
+
+                    </Form>
+
 
                 </div>
 
-                {/* <form action={createPost} className='flex flex-col'>
-                    <input type="text" name='title' className='border' placeholder='title' />
-                    <input type="text" name='slug' className='border' placeholder='slug' />
-                    <input type="text" name='content' className='border' placeholder='content' />
-                    <input type="checkbox" className='border' placeholder='published' name='published' />
-                    <input type="number" className='border' placeholder='likes' name='likes' />
-                    <input type="number" className='border' placeholder='readingTime' name='readingTime' />
-                    <input type="text" className='border' placeholder='image' name='image' />
-                    <input type="text" className='border' placeholder='imageAlt' name='imageAlt' />
-                    <select className='border' name='status'>
-                        <option value='pending'>pending</option>
-                        <option value='progress'>in progress</option>
-                        <option value='completed'>completed</option>
-                    </select>
-                    <input type="number" className='border' placeholder='watched' name='watched' />
-                    <button type='submit'>submit</button>
-                </form> */}
+
 
             </div>
         </div>
