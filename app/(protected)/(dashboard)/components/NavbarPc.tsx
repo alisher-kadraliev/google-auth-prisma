@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { usePathname } from 'next/navigation'
+import db from '@/lib/db'
 
 const NavbarPc = () => {
     const pathname = usePathname()
@@ -42,9 +43,9 @@ const NavbarPc = () => {
                         >
                             <ShoppingCart className="h-4 w-4" />
                             Blogs
-                            <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                            {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                                 6
-                            </Badge>
+                            </Badge> */}
                         </Link>
                     </nav>
                 </div>

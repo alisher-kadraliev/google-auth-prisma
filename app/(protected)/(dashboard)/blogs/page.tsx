@@ -5,10 +5,14 @@ import { columns } from './column'
 import db from '@/lib/db'
 
 const BlogsPage = async () => {
-    const data = await db.post.findMany();
+    const data = await db.post.findMany({
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
     return (
         <div
-            className="flex h-full justify-center rounded-lg border-2 p-6 shadow-sm"
+            className="flex h-full justify-center rounded-lg border-2 shadow-sm"
         >
             {data.length > 0 ? (
                 <DataTable columns={columns} data={data} />

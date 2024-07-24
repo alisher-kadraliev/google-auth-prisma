@@ -58,9 +58,11 @@ export const columns: ColumnDef<Blogs>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                            <Link href={`/blogs/${row.original.slug}`}>View Details</Link>
-                        </DropdownMenuItem>
+                        <Link href={`/blogs/${row.original.slug}`}>
+                            <DropdownMenuItem >
+                                View Details
+                            </DropdownMenuItem>
+                        </Link>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
