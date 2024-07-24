@@ -27,16 +27,16 @@ const UserInfo = async () => {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>Support</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="bg-red-600/85 text-white">
-                        <form
-                            action={async () => {
-                                "use server"
-                                await signOut({ redirectTo: '/' })
-                            }}
-                        >
+                    <form
+                        action={async () => {
+                            "use server"
+                            await signOut({ redirectTo: '/' })
+                        }}
+                    >
+                        <DropdownMenuItem className="bg-red-600/85 text-white">
                             <button type="submit">Sign Out</button>
-                        </form>
-                    </DropdownMenuItem>
+                        </DropdownMenuItem>
+                    </form>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>

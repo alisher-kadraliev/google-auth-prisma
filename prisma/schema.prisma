@@ -76,8 +76,7 @@ model Authenticator {
 }
 
 enum PostStatus {
-  pending
-  progess
+  progress
   completed
 }
 
@@ -92,9 +91,41 @@ model Post {
   readingTime Int?       @default(0)
   image       String?
   imageAlt    String?
-  status      PostStatus @default(pending) // pending, progess,completed
+  status      PostStatus @default(progress)
   watched     Int?       @default(0)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   author      User       @relation(fields: [authorId], references: [id])
+
+  metaTitle       String?
+  metaDescription String?
+
+  categories Category[]
+  tags       Tag[]
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  title    String
+  slug     String? @unique
+  image    String?
+  imageAlt String?
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id       String  @id @default(cuid())
+  title    String
+  slug     String? @unique
+  image    String?
+  imageAlt String?
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

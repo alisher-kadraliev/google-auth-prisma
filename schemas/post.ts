@@ -11,4 +11,8 @@ export const CreatePostSchema = z.object({
     status: z.string().nullable(),
     watched: z.number().optional(),
     slug: z.string().nullable(),
+    metaTitle: z.string().nullable(),
+    metaDescription: z.string().nullable(),
+
+   
 });

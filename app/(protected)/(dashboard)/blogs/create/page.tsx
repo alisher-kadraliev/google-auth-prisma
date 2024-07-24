@@ -37,6 +37,9 @@ import {
 } from "@/components/ui/select"
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { Textarea } from "@/components/ui/textarea"
+import Image from 'next/image'
+import favicon from '@/app/favicon.ico'
 
 const Create = () => {
     const [isPending, startTransition] = useTransition()
@@ -65,7 +68,6 @@ const Create = () => {
                 toast.success(res.success, { duration: 5000 });
                 router.push("/blogs")
             }
-
         });
 
     };
@@ -82,8 +84,7 @@ const Create = () => {
 
 
 
-    const { title } = form.watch();
-
+    const { title, metaTitle, metaDescription, slug } = form.watch();
     return (
         <div
             className="h-full rounded-lg border-2 shadow-sm bg-slate-50 dark:bg-slate-900"
@@ -97,19 +98,25 @@ const Create = () => {
                         </Button>
                     </Link>
                     <div className='text-white font-bold text-center text-2xl'>{title}</div>
-                    <Button type='submit' onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-white text-black hover:bg-white/80 disabled:opacity-1' variant={'default'}>
-                        {isPending ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait </> : <>Submit</>}
-                    </Button>
+                    <div className='flex gap-4 justify-center items-center'>
+                        <div className='flex gap-3 justify-center items-center'>
+                            <div className='w-2 h-2 bg-green-500 rounded-full '></div>
+                            <div className='text-white'>in progess</div>
+                        </div>
+                        <Button type='submit' onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-white text-black hover:bg-white/80 disabled:opacity-1' variant={'default'}>
+                            {isPending ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait </> : <>Submit</>}
+                        </Button>
+                    </div>
                 </div>
-                <div className='flex flex-col gap-10 px-7'>
+                <div className='flex flex-col gap-10 px-7 max-lg:px-2'>
                     <Form {...form}>
-                        <form action="" onSubmit={form.handleSubmit(onSubmit)} className='space-y-6  px-6'>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-10 px-0'>
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Basic Information</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className='grid-cols-2 grid justify-center items-start gap-4'>
+                                    <div className='grid-cols-2 max-lg:grid-cols-1 grid justify-center items-start gap-4'>
                                         <FormField
                                             control={form.control}
                                             name="title"
@@ -123,113 +130,92 @@ const Create = () => {
                                                 </FormItem>
                                             )}
                                         />
-
+                                        kategory tags
                                     </div>
                                 </CardContent>
                             </Card>
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Basic Information</CardTitle>
+                                    <CardTitle>Search Engine Optimization (SEO)</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className='grid-cols-2 max-lg:grid-cols-1 grid justify-center items-center gap-10'>
+                                        <div className='flex flex-col gap-6'>
+                                            <FormField
+                                                control={form.control}
+                                                name="slug"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Slug</FormLabel>
+                                                        <FormControl>
+                                                            <Input disabled={isPending} {...field} placeholder='Write your post slug' type='text' value={field.value || ''} />
+                                                        </FormControl>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="metaTitle"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Page Title</FormLabel>
+                                                        <FormControl>
+                                                            <Input disabled={isPending} {...field} placeholder='type here...' type='text' value={field.value || ''} />
+                                                        </FormControl>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="metaDescription"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Description</FormLabel>
+                                                        <FormControl>
+                                                            <Textarea disabled={isPending} {...field} placeholder='type here...' value={field.value || ''} />
+                                                        </FormControl>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className='flex flex-col text-wrap gap-3 justify-start items-start border bg-slate-100 dark:bg-slate-900 p-4'>
+                                            <div className='flex gap-2'>
+                                                <Image src={favicon} alt='logo' width={50} height={20} className='rounded-full' />
+                                                <div>
+                                                    <div className='text-muted-foreground text-lg'>Website Name</div>
+                                                    <div className='text-muted-foreground text-sm'> https://tureng.com &gt; {slug}</div>
+                                                </div>
+                                            </div>
+                                            <div className='text-xl font-bold text-blue-400'>{metaTitle}</div>
+                                            <div className='text-md'>{metaDescription}</div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Medya</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className='grid-cols-2 grid justify-center items-start gap-4'>
-                                        <FormField
-                                            control={form.control}
-                                            name="slug"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Slug</FormLabel>
-                                                    <FormControl>
-                                                        <Input disabled={isPending} {...field} placeholder='Write your post slug' type='text' value={field.value || ''} />
-                                                    </FormControl>
-                                                    <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="image"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <div className='flex gap-5 items-center'>
-                                                        <FormLabel>Slug</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
-                                                    </div>
-                                                    <FormControl>
-                                                        <Input disabled={isPending} {...field} placeholder='Write your post slug' type='text' value={field.value ?? ''} />
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            control={form.control}
-                                            name="likes"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <div className='flex gap-5 items-center'>
-                                                        <FormLabel>Slug</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
-                                                    </div>
-                                                    <FormControl>
-                                                        <Input disabled={isPending} {...field} placeholder='Write your post slug' type='number' />
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="readingTime"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <div className='flex gap-5 items-center'>
-                                                        <FormLabel>Slug</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
-                                                    </div>
-                                                    <FormControl>
-                                                        <Input disabled={isPending} {...field} placeholder='Write your post slug' type='number' />
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="status"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <div className='flex gap-5 items-center'>
-                                                        <FormLabel>Status</FormLabel>
-                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
-                                                    </div>
-                                                    <FormControl>
-                                                        <select
-                                                            disabled={isPending}
-                                                            {...field}
-                                                            className="form-select"
-                                                            value={field.value ?? ''}
-                                                            onChange={(e) => field.onChange(e.target.value)}
-                                                        >
-                                                            <option value="pending">Pending</option>
-                                                            <option value="progess">In grogress</option>
-                                                            <option value="completed">Completed</option>
-                                                        </select>
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
-
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Post Details</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className='grid-cols-2 grid justify-center items-start gap-4'>
                                     </div>
                                 </CardContent>
                             </Card>
                         </form>
-
                     </Form>
-
-
                 </div>
-
-
-
             </div>
         </div>
     )

@@ -3,6 +3,7 @@ import React from 'react'
 import { DataTable } from './data-table'
 import { columns } from './column'
 import db from '@/lib/db'
+import Link from 'next/link'
 
 const BlogsPage = async () => {
     const data = await db.post.findMany({
@@ -24,7 +25,9 @@ const BlogsPage = async () => {
                     <p className="text-sm text-muted-foreground">
                         You can add a new post by clicking the button below
                     </p>
-                    <Button className="mt-4">Add Product</Button>
+                    <Link href={'/blogs/create'}>
+                        <Button className="mt-4">Add Product</Button>
+                    </Link>
                 </div>
             )}
         </div>
