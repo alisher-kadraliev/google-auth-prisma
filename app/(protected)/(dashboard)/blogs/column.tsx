@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import { DataTableColumnHeader } from "@/components/table/dataTableColumnHeader"
 
 export type Blogs = {
@@ -25,7 +25,7 @@ export type Blogs = {
     readingTime: number | null;
     image: string | null;
     imageAlt: string | null;
-    status: "pending" | "progess" | "completed";
+    status: "progress" | "completed";
     watched: number | null;
     createdAt: Date;
     updatedAt: Date;

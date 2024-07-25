@@ -13,6 +13,7 @@ export const CreatePostSchema = z.object({
     slug: z.string().nullable(),
     metaTitle: z.string().nullable(),
     metaDescription: z.string().nullable(),
-
-   
+    categoryId: z.string().min(1,
+        { message: "Category is required" }
+    ),
 });

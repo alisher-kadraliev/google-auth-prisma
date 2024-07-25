@@ -86,7 +86,6 @@ model Post {
   content     String
   slug        String?    @unique
   published   Boolean    @default(false)
-  authorId    String
   likes       Int?       @default(0)
   readingTime Int?       @default(0)
   image       String?
@@ -95,13 +94,16 @@ model Post {
   watched     Int?       @default(0)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  author      User       @relation(fields: [authorId], references: [id])
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
 
   metaTitle       String?
   metaDescription String?
+  categoryId      String
+  categories      Category @relation(fields: [categoryId], references: [id])
 
-  categories Category[]
-  tags       Tag[]
+  tags Tag[]
 }
 
 model Category {

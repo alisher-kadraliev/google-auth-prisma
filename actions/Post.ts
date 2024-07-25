@@ -1,13 +1,12 @@
 "use server"
 
 import prisma from "@/lib/db"
-import { revalidatePath, revalidateTag } from "next/cache"
+import { revalidatePath } from "next/cache"
 import { auth } from "@/auth"
 import { PostStatus } from "@prisma/client"
 import db from '@/lib/db'
 import { CreatePostSchema } from "@/schemas/post"
 import * as z from 'zod'
-import { redirect } from "next/navigation"
 
 
 export const getPosts = async () => {
@@ -56,15 +55,17 @@ export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => 
                 readingTime,
                 image,
                 imageAlt,
-                status: status || PostStatus.pending,
+                status: status || PostStatus.progress,
                 watched,
                 authorId: session.user.id || "",
+                categoryId: formData.categoryId,
             },
         })
         revalidatePath("/blogs")
 
         return { success: "Post created successfully" }
     } catch (error: any) {
+        console.log(error);
         return { error: "Error try again" }
     }
 }

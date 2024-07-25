@@ -26,7 +26,7 @@ const BlogsPage = async () => {
                         You can add a new post by clicking the button below
                     </p>
                     <Link href={'/blogs/create'}>
-                        <Button className="mt-4">Add Product</Button>
+                        <Button className="mt-4">Add Post</Button>
                     </Link>
                 </div>
             )}
