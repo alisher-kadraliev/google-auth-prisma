@@ -1,6 +1,6 @@
 "use client"
 import { createPost } from '@/actions/Post'
-import { useEffect, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreatePostSchema } from '@/schemas/post'
@@ -43,7 +43,8 @@ import {
 import { cn } from '@/lib/utils'
 
 const Create = ({ categoriesList }: { categoriesList: any }) => {
-    const [isPending, startTransition] = useTransition()
+    const [isLoading, setIsLoading] = useState(false)
+
     const router = useRouter()
     const form = useForm<z.infer<typeof CreatePostSchema>>({
         resolver: zodResolver(CreatePostSchema),
@@ -66,17 +67,22 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
 
 
     const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
-        startTransition(async () => {
-            const res = await createPost(values)
+        setIsLoading(true)
+        toast.promise(
+            createPost(values),
+            {
+                loading: 'Scanning memories🧐...',
+                success: (res) => <b>{res?.success} </b>,
+                error: (res) => <b>{res.error} </b>,
+            }
+        ).then(res => {
+            setIsLoading(false)
             if (res?.success) {
-                toast.success(res.success, { duration: 5000 });
                 router.push("/blogs")
             }
-            if (res?.error) {
-                toast.error(res.error, { duration: 5000 });
-            }
+        }).catch(() => {
+            setIsLoading(false)
         });
-
     };
 
     useEffect(() => {
@@ -109,15 +115,15 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                         <div className='flex gap-3 justify-center items-center'>
                             <div className='w-2 h-2 bg-green-500 rounded-full '></div>
                             <div className='text-white'>
-                                {isPending ? <>Scanning memories...</> : <> in progess</>}
+                                in progess
                             </div>
                         </div>
-                        <Button type='submit' onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-white text-black hover:bg-white/80 disabled:opacity-1' variant={'default'}>
-                            {isPending ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait </> : <>Submit</>}
+                        <Button type='submit' onClick={form.handleSubmit(onSubmit)} disabled={isLoading} className='bg-white text-black hover:bg-white/80 disabled:opacity-1' variant={'default'}>
+                            {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait</> : <>Submit</>}
                         </Button>
                     </div>
                 </div>
-                <div className='flex flex-col gap-10 px-7 max-lg:px-2'>
+                <div className={`flex flex-col gap-10 px-7 max-lg:px-2 ${isLoading ? 'blur-sm' : ''}`}>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-10 px-0'>
                             <Card>
@@ -133,7 +139,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                 <FormItem>
                                                     <FormLabel>Title</FormLabel>
                                                     <FormControl>
-                                                        <Input disabled={isPending}  {...field} placeholder='Write your post title' type='text' />
+                                                        <Input disabled={isLoading}  {...field} placeholder='Write your post title' type='text' />
                                                     </FormControl>
                                                     <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                 </FormItem>
@@ -145,7 +151,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                             name="categoryId"
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-col justify-end">
-                                                    <FormLabel>Select Category</FormLabel>
+                                                    <FormLabel>Categories</FormLabel>
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
@@ -174,7 +180,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                                     <CommandGroup>
                                                                         {categoriesList.map((language: any) => (
                                                                             <CommandItem
-                                                                                disabled={isPending}
+                                                                                disabled={isLoading}
                                                                                 value={language.title}
                                                                                 key={language.id}
                                                                                 onSelect={() => {
@@ -218,7 +224,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                     <FormItem>
                                                         <FormLabel>Slug</FormLabel>
                                                         <FormControl>
-                                                            <Input disabled={isPending} {...field} placeholder='Write your post slug' type='text' value={field.value || ''} />
+                                                            <Input disabled={isLoading} {...field} placeholder='Write your post slug' type='text' value={field.value || ''} />
                                                         </FormControl>
                                                         <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                     </FormItem>
@@ -231,7 +237,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                     <FormItem>
                                                         <FormLabel>Page Title</FormLabel>
                                                         <FormControl>
-                                                            <Input disabled={isPending} {...field} placeholder='type here...' type='text' value={field.value || ''} />
+                                                            <Input disabled={isLoading} {...field} placeholder='type here...' type='text' value={field.value || ''} />
                                                         </FormControl>
                                                         <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                     </FormItem>
@@ -244,7 +250,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                     <FormItem>
                                                         <FormLabel>Description</FormLabel>
                                                         <FormControl>
-                                                            <Textarea disabled={isPending} {...field} placeholder='type here...' value={field.value || ''} />
+                                                            <Textarea disabled={isLoading} {...field} placeholder='type here...' value={field.value || ''} />
                                                         </FormControl>
                                                         <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                     </FormItem>
