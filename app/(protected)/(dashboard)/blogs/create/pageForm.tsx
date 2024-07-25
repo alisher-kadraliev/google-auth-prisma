@@ -108,7 +108,9 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                     <div className='flex gap-4 justify-center items-center'>
                         <div className='flex gap-3 justify-center items-center'>
                             <div className='w-2 h-2 bg-green-500 rounded-full '></div>
-                            <div className='text-white'>in progess</div>
+                            <div className='text-white'>
+                                {isPending ? <>Scanning memories...</> : <> in progess</>}
+                            </div>
                         </div>
                         <Button type='submit' onClick={form.handleSubmit(onSubmit)} disabled={isPending} className='bg-white text-black hover:bg-white/80 disabled:opacity-1' variant={'default'}>
                             {isPending ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait </> : <>Submit</>}
@@ -172,6 +174,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                                     <CommandGroup>
                                                                         {categoriesList.map((language: any) => (
                                                                             <CommandItem
+                                                                                disabled={isPending}
                                                                                 value={language.title}
                                                                                 key={language.id}
                                                                                 onSelect={() => {
