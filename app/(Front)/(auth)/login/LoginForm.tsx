@@ -5,24 +5,18 @@ import {
     CardContent, CardFooter
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { LoginSchema } from "@/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import {
     Form,
-    FormControl,
-    FormDescription,
-    FormField,
+    FormControl, FormField,
     FormItem,
     FormLabel,
-    FormMessage,
+    FormMessage
 } from "@/components/ui/form"
 import { login } from "@/actions/login"
-import { useState } from "react"
 const LoginForm = () => {
-    const [error, setError] = useState<string | null>(null)
-    const [success, setSuccess] = useState<string | null>(null)
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -31,15 +25,11 @@ const LoginForm = () => {
         }
     })
 
-    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-        try {
-            await login(values)
-            setSuccess("Login successful");
 
-        } catch (error: any) {
-            setError("Error" + error);
-        }
+    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+        login(values)
     }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -77,10 +67,7 @@ const LoginForm = () => {
 
                 </CardContent>
                 <CardFooter className="flex flex-col gap-2 justify-center items-center">
-                    <Button className="w-full" type="submit">Sign in</Button>
-                    {error && <div className="text-destructive bg-destructive/15 p-3">{error} </div>}
-                    {success && <div className="text-green-600 w-full rounded-lg text-center bg-green-400/15 p-3">{success} </div>}
-
+                    <Button className="w-full text-xl" type="submit" >Login </Button>
                 </CardFooter>
             </form>
         </Form>

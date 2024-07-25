@@ -14,15 +14,16 @@ import { Label } from "@/components/ui/label"
 import { FcGoogle } from "react-icons/fc";
 import { login } from "@/actions/login"
 import LoginForm from "./LoginForm"
+import { Toaster } from "react-hot-toast"
 
 const LoginPage = async () => {
     const session = await auth()
     if (session) {
         redirect("/dashboard")
     }
-    console.log(session);
     return (
         <div className="flex justify-center items-center h-screen">
+            <Toaster />
             <Card className="w-full max-w-sm">
                 <CardHeader>
                     <CardTitle className="text-2xl">Login</CardTitle>
