@@ -67,3 +67,6 @@
     @apply bg-background text-foreground;
   }
 }
+.bn-editor{
+  min-height: 610px;
+}

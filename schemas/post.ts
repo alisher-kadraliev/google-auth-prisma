@@ -2,7 +2,8 @@ import * as z from 'zod';
 
 export const CreatePostSchema = z.object({
     title: z.string().min(1),
-    content: z.string(),
+    content: z.string().nullable(),
+    document: z.object({}).nullable(),
     published: z.boolean(),
     likes: z.number().optional(),
     readingTime: z.number().optional(),

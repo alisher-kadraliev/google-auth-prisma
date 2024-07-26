@@ -62,8 +62,8 @@ export function CollapseMenuButton({
         asChild
       >
         <Button
-          variant={active ? "secondary" : "ghost"}
-          className="w-full justify-start h-10"
+          variant={active ? "secondary" : "default"}
+          className="w-full justify-start h-10 dark:bg-slate-800 dark:text-white"
         >
           <div className="w-full items-center flex justify-between">
             <div className="flex items-center">
@@ -101,8 +101,8 @@ export function CollapseMenuButton({
         {submenus.map(({ href, label, active }, index) => (
           <Button
             key={index}
-            variant={active ? "secondary" : "ghost"}
-            className="w-full justify-start h-10 mb-1"
+            variant={active ? "secondary" : "default"}
+            className="w-full justify-start h-10 mb-1 dark:bg-slate-800 dark:text-white"
             asChild
           >
             <Link href={href}>
@@ -131,8 +131,8 @@ export function CollapseMenuButton({
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
               <Button
-                variant={active ? "secondary" : "ghost"}
-                className="w-full justify-start h-10 mb-1"
+                variant={active ? "secondary" : "default"}
+                className="w-full justify-start h-10 mb-1 dark:bg-slate-800 dark:text-white"
               >
                 <div className="w-full items-center flex justify-between">
                   <div className="flex items-center">

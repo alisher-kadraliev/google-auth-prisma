@@ -57,15 +57,15 @@ export function Menu({ isOpen }: MenuProps) {
                       <Tooltip delayDuration={100}>
                         <TooltipTrigger asChild>
                           <Button
-                            variant={active ? "secondary" : "ghost"}
-                            className="w-full justify-start h-10 mb-1"
+                            variant={active ? "secondary" : "default"}
+                            className="w-full justify-start h-10 mb-1 dark:bg-slate-800 dark:text-white"
                             asChild
                           >
                             <Link href={href}>
                               <span
                                 className={cn(isOpen === false ? "" : "mr-4")}
                               >
-                                <Icon size={18} />
+                                <Icon size={18} className="" />
                               </span>
                               <p
                                 className={cn(

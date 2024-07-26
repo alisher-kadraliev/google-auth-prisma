@@ -1,6 +1,5 @@
 "use server"
 
-import prisma from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/auth"
 import { PostStatus } from "@prisma/client"
@@ -36,7 +35,6 @@ export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => 
     const imageAlt = formData.imageAlt as string | null;
     const status = formData.status as PostStatus | null;
     const watched = formData.watched ? Number(formData.watched) : 0
-
     const slug = providedSlug ? await generateUniqueSlug(providedSlug) : await generateUniqueSlug(title);
 
     try {
@@ -45,7 +43,7 @@ export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => 
             return { error: "Slug already exists" };
         }
 
-        await prisma.post.create({
+        const post = await db.post.create({
             data: {
                 title,
                 content,
@@ -59,11 +57,12 @@ export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => 
                 watched,
                 authorId: session.user.id || "",
                 categoryId: formData.categoryId,
+                document: {}, // Add the document property
             },
         })
         revalidatePath("/blogs")
 
-        return { success: "Post created successfully" }
+        return { success: `${post.title} created successfully` }
     } catch (error: any) {
         console.log(error);
         return { error: "Error try again" }

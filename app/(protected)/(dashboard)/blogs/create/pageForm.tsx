@@ -1,13 +1,16 @@
 "use client"
 import { createPost } from '@/actions/Post'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreatePostSchema } from '@/schemas/post'
 import { Button } from "@/components/ui/button"
 import * as z from 'zod'
 import { Loader2, ChevronLeft, Check, ChevronsUpDown } from "lucide-react"
-
+import "@blocknote/core/fonts/inter.css"
+import { useCreateBlockNote } from "@blocknote/react"
+import { BlockNoteView } from "@blocknote/mantine"
+import "@blocknote/mantine/style.css"
 import {
     Form,
     FormControl, FormField,
@@ -41,10 +44,28 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from '@/lib/utils'
-const Create = ({ categoriesList }: { categoriesList: any }) => {
-    const [isLoading, setIsLoading] = useState(false)
+import { useTheme } from 'next-themes'
 
+// async function uploadFile(file: File) {
+//     const body = new FormData();
+//     body.append("file", file);
+
+//     const ret = await fetch("https://tmpfiles.org/api/v1/upload", {
+//         method: "POST",
+//         body: body,
+//     });
+//     return (await ret.json()).data.url.replace(
+//         "tmpfiles.org/",
+//         "tmpfiles.org/dl/"
+//     );
+// }
+
+
+const Create = ({ categoriesList }: { categoriesList: any }) => {
+
+    const { resolvedTheme } = useTheme()
     const router = useRouter()
+    const editor = useCreateBlockNote();
     const form = useForm<z.infer<typeof CreatePostSchema>>({
         resolver: zodResolver(CreatePostSchema),
         defaultValues: {
@@ -61,9 +82,11 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
             metaDescription: "",
             metaTitle: "",
             categoryId: "",
+            document: editor.document
         }
     })
-
+    const [isLoading, setIsLoading] = useState(false)
+    // const editor = useCreateBlockNote({ uploadFile });
 
     const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
         setIsLoading(true)
@@ -94,21 +117,19 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
         return () => subscription.unsubscribe();
     }, [form.watch, form]);
 
-
-
     const { title, metaTitle, metaDescription, slug } = form.watch();
+
     return (
         <div
-            className="h-full rounded-lg border-2 shadow-sm bg-slate-50 dark:bg-slate-900"
+            className="h-full rounded-lg pb-6 border-2 shadow-sm bg-slate-50 dark:bg-slate-900"
         >
-            <div className="flex flex-col gap-1 relative ">
-
-                <div className='bg-black shadow-md rounded-xl w-full flex justify-between items-center p-3 sticky top-0 mb-4'>
-                        <Link href="/blogs" >
-                            <Button variant="outline" size="icon">
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                        </Link>
+            <div className="flex flex-col gap-1 relative">
+                <div className='bg-black shadow-md rounded-xl z-50 w-full flex justify-between items-center p-3 sticky top-0 mb-4'>
+                    <Link href="/blogs" >
+                        <Button variant="outline" size="icon">
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                    </Link>
                     <div className='text-white font-bold text-center text-2xl'>{title}</div>
                     <div className='flex gap-4 justify-center items-center'>
                         <div className='flex gap-3 justify-center items-center'>
@@ -284,8 +305,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                     <CardTitle>Post Details</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className='grid-cols-2 grid justify-center items-start gap-4'>
-                                    </div>
+                                    <BlockNoteView editor={editor} theme={resolvedTheme === "dark" ? "dark" : "light"} />
                                 </CardContent>
                             </Card>
                         </form>

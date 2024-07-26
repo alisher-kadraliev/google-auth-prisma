@@ -1,6 +1,8 @@
-import React from 'react'
 import db from '@/lib/db'
 import { notFound } from 'next/navigation'
+import { Card, CardContent } from "@/components/ui/card"
+import { ContentLayout } from '@/components/admin-panel/content-layout'
+
 type BlogPageProps = {
   params: {
     slug: string
@@ -21,14 +23,15 @@ const Blog = async ({ params }: BlogPageProps) => {
     return notFound();
   }
   return (
-    <div
-      className="flex h-full justify-center rounded-lg border-2 p-6 shadow-sm"
-    >
-      <div className="flex flex-col justify-center items-center gap-1 text-center">
-        <h2>{post.slug} </h2>
-        <h2>{category?.title} </h2>
-      </div>
-    </div>
+    <ContentLayout>
+      <Card className="rounded-lg border-none mt-6">
+        <CardContent>
+          <h2>{post.slug} </h2>
+          <h2>{post.content || 'notnew'} </h2>
+          <h2>{category?.title} </h2>
+        </CardContent>
+      </Card>
+    </ContentLayout>
   )
 }
 
