@@ -41,7 +41,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from '@/lib/utils'
-
 const Create = ({ categoriesList }: { categoriesList: any }) => {
     const [isLoading, setIsLoading] = useState(false)
 
@@ -105,11 +104,11 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
             <div className="flex flex-col gap-1 relative ">
 
                 <div className='bg-black shadow-md rounded-xl w-full flex justify-between items-center p-3 sticky top-0 mb-4'>
-                    <Link href="/blogs" >
-                        <Button variant="outline" size="icon">
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        <Link href="/blogs" >
+                            <Button variant="outline" size="icon">
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                        </Link>
                     <div className='text-white font-bold text-center text-2xl'>{title}</div>
                     <div className='flex gap-4 justify-center items-center'>
                         <div className='flex gap-3 justify-center items-center'>
