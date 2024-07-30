@@ -45,21 +45,21 @@ import {
 } from "@/components/ui/popover"
 import { cn } from '@/lib/utils'
 import { useTheme } from 'next-themes'
-import Tiptap from '@/components/admin-panel/Tiptap'
+
+import dynamic from "next/dynamic";
+const Editor = dynamic(() => import("@/components/editor/Editor"), { ssr: false });
 
 
 const Create = ({ categoriesList }: { categoriesList: any }) => {
-    const [content, setContent] = useState<any>(null);
 
     const { resolvedTheme } = useTheme()
     const router = useRouter()
-    const editor = useCreateBlockNote();
 
     const form = useForm<z.infer<typeof CreatePostSchema>>({
         resolver: zodResolver(CreatePostSchema),
         defaultValues: {
             title: "",
-            content: JSON.stringify(content),
+            content: "",
             published: false,
             likes: 0,
             readingTime: 0,
@@ -74,14 +74,14 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
         }
     })
     const [isLoading, setIsLoading] = useState(false)
-    // const editor = useCreateBlockNote({ uploadFile });
+    const editor = useCreateBlockNote();
 
     const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
         setIsLoading(true)
         toast.promise(
             createPost(values),
             {
-                loading: 'Scanning memories🧐...',
+                loading: 'Scanning memories🧐',
                 success: (res) => <b>{res?.success} </b>,
                 error: (res) => <b>{res.error} </b>,
             }
@@ -148,6 +148,19 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                     <FormLabel>Title</FormLabel>
                                                     <FormControl>
                                                         <Input disabled={isLoading}  {...field} placeholder='Write your post title' type='text' />
+                                                    </FormControl>
+                                                    <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="content"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Title</FormLabel>
+                                                    <FormControl>
+                                                        <Input disabled={isLoading}  {...field} placeholder='Write your post title' type='text' value={field.value || ""} />
                                                     </FormControl>
                                                     <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                 </FormItem>
@@ -293,9 +306,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                     <CardTitle>Post Details</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    {/* <BlockNoteView editor={editor} theme={resolvedTheme === "dark" ? "dark" : "light"} /> */}
-                                    <label>Content</label>
-                                 
+                                    <BlockNoteView editor={editor} theme={resolvedTheme === "dark" ? "dark" : "light"} />
                                 </CardContent>
                             </Card>
                         </form>
