@@ -295,18 +295,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                 <CardContent>
                                     {/* <BlockNoteView editor={editor} theme={resolvedTheme === "dark" ? "dark" : "light"} /> */}
                                     <label>Content</label>
-                                    <Controller
-                                        name="content"
-                                        render={({ field }) => (
-                                            <Tiptap
-                                                onChange={(blocks) => {
-                                                    setContent(blocks);
-                                                    form.setValue('content', JSON.stringify(blocks));
-                                                }}
-                                                initialContent={field.value || ''}
-                                            />
-                                        )}
-                                    />
+                                 
                                 </CardContent>
                             </Card>
                         </form>
