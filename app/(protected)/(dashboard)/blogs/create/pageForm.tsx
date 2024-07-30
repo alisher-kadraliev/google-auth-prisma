@@ -1,7 +1,7 @@
 "use client"
 import { createPost } from '@/actions/Post'
 import { useEffect, useMemo, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreatePostSchema } from '@/schemas/post'
 import { Button } from "@/components/ui/button"
@@ -45,32 +45,21 @@ import {
 } from "@/components/ui/popover"
 import { cn } from '@/lib/utils'
 import { useTheme } from 'next-themes'
-
-// async function uploadFile(file: File) {
-//     const body = new FormData();
-//     body.append("file", file);
-
-//     const ret = await fetch("https://tmpfiles.org/api/v1/upload", {
-//         method: "POST",
-//         body: body,
-//     });
-//     return (await ret.json()).data.url.replace(
-//         "tmpfiles.org/",
-//         "tmpfiles.org/dl/"
-//     );
-// }
+import Tiptap from '@/components/admin-panel/Tiptap'
 
 
 const Create = ({ categoriesList }: { categoriesList: any }) => {
+    const [content, setContent] = useState<any>(null);
 
     const { resolvedTheme } = useTheme()
     const router = useRouter()
     const editor = useCreateBlockNote();
+
     const form = useForm<z.infer<typeof CreatePostSchema>>({
         resolver: zodResolver(CreatePostSchema),
         defaultValues: {
             title: "",
-            content: "",
+            content: JSON.stringify(content),
             published: false,
             likes: 0,
             readingTime: 0,
@@ -82,7 +71,6 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
             metaDescription: "",
             metaTitle: "",
             categoryId: "",
-            document: editor.document
         }
     })
     const [isLoading, setIsLoading] = useState(false)
@@ -305,7 +293,20 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                     <CardTitle>Post Details</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <BlockNoteView editor={editor} theme={resolvedTheme === "dark" ? "dark" : "light"} />
+                                    {/* <BlockNoteView editor={editor} theme={resolvedTheme === "dark" ? "dark" : "light"} /> */}
+                                    <label>Content</label>
+                                    <Controller
+                                        name="content"
+                                        render={({ field }) => (
+                                            <Tiptap
+                                                onChange={(blocks) => {
+                                                    setContent(blocks);
+                                                    form.setValue('content', JSON.stringify(blocks));
+                                                }}
+                                                initialContent={field.value || ''}
+                                            />
+                                        )}
+                                    />
                                 </CardContent>
                             </Card>
                         </form>

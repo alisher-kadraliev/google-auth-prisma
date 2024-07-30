@@ -57,8 +57,7 @@ export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => 
                 watched,
                 authorId: session.user.id || "",
                 categoryId: formData.categoryId,
-                document: {}, // Add the document property
-            },
+            }
         })
         revalidatePath("/blogs")
 

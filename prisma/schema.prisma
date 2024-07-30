@@ -84,7 +84,6 @@ model Post {
   id          String     @id @default(cuid())
   title       String
   content     String
-  document    Json       @db.Json
   slug        String?    @unique
   published   Boolean    @default(false)
   likes       Int?       @default(0)

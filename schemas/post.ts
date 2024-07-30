@@ -3,7 +3,6 @@ import * as z from 'zod';
 export const CreatePostSchema = z.object({
     title: z.string().min(1),
     content: z.string().nullable(),
-    document: z.object({}).nullable(),
     published: z.boolean(),
     likes: z.number().optional(),
     readingTime: z.number().optional(),
@@ -14,7 +13,7 @@ export const CreatePostSchema = z.object({
     slug: z.string().nullable(),
     metaTitle: z.string().nullable(),
     metaDescription: z.string().nullable(),
-    categoryId: z.string().min(1,
-        { message: "Category is required" }
-    ),
+    categoryId: z.string().min(1, {
+        message: 'Category is required'
+    })
 });
