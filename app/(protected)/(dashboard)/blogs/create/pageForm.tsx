@@ -1,5 +1,4 @@
 "use client"
-import { createPost } from '@/actions/Post'
 import { useEffect, useMemo, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,8 +7,6 @@ import { Button } from "@/components/ui/button"
 import * as z from 'zod'
 import { Loader2, ChevronLeft, Check, ChevronsUpDown } from "lucide-react"
 import "@blocknote/core/fonts/inter.css"
-import { useCreateBlockNote } from "@blocknote/react"
-import { BlockNoteView } from "@blocknote/mantine"
 import "@blocknote/mantine/style.css"
 import {
     Form,
@@ -44,16 +41,12 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from '@/lib/utils'
-import { useTheme } from 'next-themes'
-
-import dynamic from "next/dynamic";
-const Editor = dynamic(() => import("@/components/editor/Editor"), { ssr: false });
-
-
+import Tiptap from '@/components/Tiptap'
+import { createPost } from '@/actions/Post'
 const Create = ({ categoriesList }: { categoriesList: any }) => {
 
-    const { resolvedTheme } = useTheme()
     const router = useRouter()
+    const [content, setContent] = useState<string | undefined>(undefined);
 
     const form = useForm<z.infer<typeof CreatePostSchema>>({
         resolver: zodResolver(CreatePostSchema),
@@ -73,10 +66,17 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
             categoryId: "",
         }
     })
+
     const [isLoading, setIsLoading] = useState(false)
-    const editor = useCreateBlockNote();
+    const { title, metaTitle, metaDescription, slug } = form.watch();
+    const { setValue, control } = form;
+
+    useEffect(() => {
+        setValue('content', JSON.stringify(content));
+    }, [content, setValue]);
 
     const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
+
         setIsLoading(true)
         toast.promise(
             createPost(values),
@@ -105,7 +105,8 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
         return () => subscription.unsubscribe();
     }, [form.watch, form]);
 
-    const { title, metaTitle, metaDescription, slug } = form.watch();
+
+
 
     return (
         <div
@@ -153,7 +154,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                 </FormItem>
                                             )}
                                         />
-                                        <FormField
+                                        {/* <FormField
                                             control={form.control}
                                             name="content"
                                             render={({ field }) => (
@@ -165,7 +166,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                     <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
                                                 </FormItem>
                                             )}
-                                        />
+                                        /> */}
 
                                         <FormField
                                             control={form.control}
@@ -306,7 +307,18 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                     <CardTitle>Post Details</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <BlockNoteView editor={editor} theme={resolvedTheme === "dark" ? "dark" : "light"} />
+                                    <Controller
+                                        name="content"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Tiptap
+                                                editable={true}
+                                                initialContent={field.value || ''}
+                                                onChange={(content) => setContent(content)}
+                                            />
+                                        )}
+                                    />
+
                                 </CardContent>
                             </Card>
                         </form>

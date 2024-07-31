@@ -21,6 +21,9 @@ const generateUniqueSlug = async (title: string) => {
     return slug;
 }
 
+export const createMe = async (values:any) => {
+    console.log(values);
+}
 export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => {
     const session = await auth()
     if (!session || !session.user) return null;

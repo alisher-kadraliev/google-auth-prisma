@@ -2,7 +2,7 @@ import db from '@/lib/db'
 import { notFound } from 'next/navigation'
 import { Card, CardContent } from "@/components/ui/card"
 import { ContentLayout } from '@/components/admin-panel/content-layout'
-import ContentPage from './Content'
+import Tiptap from '@/components/Tiptap'
 
 type BlogPageProps = {
   params: {
@@ -28,12 +28,12 @@ const Blog = async ({ params }: BlogPageProps) => {
       <Card className="rounded-lg border-none mt-6">
         <CardContent>
           <h2>{post.slug} </h2>
-          <ContentPage content={post.content} />
+          <Tiptap editable={false} initialContent={JSON.parse(post.content)} />
           <h2>{category?.title} </h2>
         </CardContent>
       </Card>
     </ContentLayout>
-  )
+  );
 }
 
 export default Blog
