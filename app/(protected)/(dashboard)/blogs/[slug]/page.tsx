@@ -28,7 +28,7 @@ const Blog = async ({ params }: BlogPageProps) => {
       <Card className="rounded-lg border-none mt-6">
         <CardContent>
           <h2>{post.slug} </h2>
-          <Tiptap editable={false} initialContent={JSON.parse(post.content)} />
+          <Tiptap  editable={false} initialContent={JSON.parse(post.content)} />
           <h2>{category?.title} </h2>
         </CardContent>
       </Card>

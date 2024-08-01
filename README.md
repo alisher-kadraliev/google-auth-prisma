@@ -1,6 +1,6 @@
 
 ```bash
-Breadcrumb
+text editor: table
 auth page
-sidebar toggle close
+[ text editor](https://tiptap.dev/docs/examples/experiments/linting)
 ```
