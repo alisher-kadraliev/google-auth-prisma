@@ -1,16 +1,16 @@
 "use server"
 import { auth } from '@/auth'
 import db from '@/lib/db'
-import { CreateCategorySchema } from '@/schemas/category'
+import { CreateTagsSchema } from '@/schemas/tags'
 import { revalidatePath } from 'next/cache'
 import * as z from 'zod'
 
-export const categories = async () => {
-    const categories = db.category.findMany()
-    return categories
+export const tags = async () => {
+    const tags = db.tag.findMany()
+    return tags
 }
 
-export const createCategory = async (formData: z.infer<typeof CreateCategorySchema>) => {
+export const createTags = async (formData: z.infer<typeof CreateTagsSchema>) => {
     const session = await auth()
     if (!session || !session.user) return null;
 
@@ -21,7 +21,7 @@ export const createCategory = async (formData: z.infer<typeof CreateCategorySche
 
     try {
 
-        const category = await db.category.create({
+        const tag = await db.tag.create({
             data: {
                 title,
                 slug,
@@ -31,7 +31,7 @@ export const createCategory = async (formData: z.infer<typeof CreateCategorySche
         })
         revalidatePath("/categories")
 
-        return { success: `${category.title} created successfully` }
+        return { success: `${tag.title} created successfully` }
     } catch (error: any) {
         console.log(error);
         return { error: "Error try again" }

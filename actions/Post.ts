@@ -21,7 +21,7 @@ const generateUniqueSlug = async (title: string) => {
     return slug;
 }
 
-export const createMe = async (values:any) => {
+export const createMe = async (values: any) => {
     console.log(values);
 }
 export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => {
@@ -39,6 +39,7 @@ export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => 
     const status = formData.status as PostStatus | null;
     const watched = formData.watched ? Number(formData.watched) : 0
     const slug = providedSlug ? await generateUniqueSlug(providedSlug) : await generateUniqueSlug(title);
+    const tags = formData.tags.map((tag: { title: string; id: number }) => ({ id: tag.id.toString(), slug: tag.title.toLowerCase().replace(/ /g, "-") }));
 
     try {
         const existingPost = await db.post.findUnique({ where: { slug } });
@@ -60,11 +61,32 @@ export const createPost = async (formData: z.infer<typeof CreatePostSchema>) => 
                 watched,
                 authorId: session.user.id || "",
                 categoryId: formData.categoryId,
+                tags: {
+                    connect: tags.map((tag) => ({ id: tag.id, slug: tag.slug })),
+                }
+            },
+            include: {
+                tags: true,
             }
         })
         revalidatePath("/blogs")
 
         return { success: `${post.title} created successfully` }
+    } catch (error: any) {
+        console.log(error);
+        return { error: "Error try again" }
+    }
+}
+
+export const deletePost = async (id: string) => {
+    try {
+        await db.post.delete({
+            where: {
+                id
+            }
+        })
+        revalidatePath("/blogs")
+        return { success: "Post deleted successfully" }
     } catch (error: any) {
         console.log(error);
         return { error: "Error try again" }

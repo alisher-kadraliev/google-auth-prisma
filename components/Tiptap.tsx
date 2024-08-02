@@ -34,9 +34,7 @@ const extensions = [
         autolink: true,
         defaultProtocol: 'https',
     }),
-    CharacterCount.configure({
-        limit,
-    }),
+    CharacterCount,
     Placeholder.configure({
         placeholder: () => {
             return 'Can you add some further context?'

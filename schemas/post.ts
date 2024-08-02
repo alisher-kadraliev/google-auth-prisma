@@ -15,5 +15,9 @@ export const CreatePostSchema = z.object({
     metaDescription: z.string().nullable(),
     categoryId: z.string().min(1, {
         message: 'Category is required'
-    })
+    }),
+    tags: z.array(z.object({
+        id: z.number(),
+        title: z.string()
+    }))
 });

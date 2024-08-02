@@ -15,24 +15,15 @@ import { DataTableColumnHeader } from "@/components/table/dataTableColumnHeader"
 import DropActions from "./components/drop-actions"
 
 
-export type Blogs = {
+export type Category = {
     id: string;
     title: string;
-    content: string;
     slug: string | null;
-    published: boolean;
-    authorId: string;
-    likes: number | null;
-    readingTime: number | null;
     image: string | null;
     imageAlt: string | null;
-    status: "progress" | "completed";
-    watched: number | null;
-    createdAt: Date;
-    updatedAt: Date;
 }
 
-export const columns: ColumnDef<Blogs>[] = [
+export const columns: ColumnDef<Category>[] = [
 
     {
         accessorKey: "title",
@@ -41,9 +32,9 @@ export const columns: ColumnDef<Blogs>[] = [
         ),
     },
     {
-        accessorKey: "published",
+        accessorKey: "slug",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Published" />
+            <DataTableColumnHeader column={column} title="slug" />
         ),
     },
     {

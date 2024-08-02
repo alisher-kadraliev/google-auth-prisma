@@ -11,6 +11,16 @@ const nextConfig = {
                 hostname: "utfs.io",
                 pathname: "/**",
             },
+            {
+                protocol: "https",
+                hostname: "images.unsplash.com",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "assets.aceternity.com",
+                pathname: "/**",
+            },
         ],
     },
 };

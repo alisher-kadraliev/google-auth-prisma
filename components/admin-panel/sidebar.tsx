@@ -10,8 +10,8 @@ import { SidebarToggle } from "@/components/admin-panel/sidebar-toggle";
 
 export function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
-  
-  if(!sidebar) return null;
+
+  if (!sidebar) return null;
 
   return (
     <aside
@@ -30,7 +30,7 @@ export function Sidebar() {
           variant="link"
           asChild
         >
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <PanelsTopLeft className="w-6 h-6 mr-1 text-white" />
             <h1
               className={cn(
@@ -40,7 +40,7 @@ export function Sidebar() {
                   : "translate-x-0 opacity-100"
               )}
             >
-              Brand
+              Go Home Page
             </h1>
           </Link>
         </Button>

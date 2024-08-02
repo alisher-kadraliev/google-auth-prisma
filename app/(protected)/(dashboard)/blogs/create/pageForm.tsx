@@ -1,11 +1,11 @@
 "use client"
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreatePostSchema } from '@/schemas/post'
 import { Button } from "@/components/ui/button"
 import * as z from 'zod'
-import { Loader2, ChevronLeft, Check, ChevronsUpDown } from "lucide-react"
+import { Loader2, ChevronLeft, Check, ChevronsUpDown, X } from "lucide-react"
 import "@blocknote/core/fonts/inter.css"
 import "@blocknote/mantine/style.css"
 import {
@@ -44,11 +44,20 @@ import { cn } from '@/lib/utils'
 import Tiptap from '@/components/Tiptap'
 import { createPost } from '@/actions/Post'
 import { UploadButton } from "@/utils/uploadthing";
+import { Badge } from '@/components/ui/badge'
+import { Command as CommandPrimitive } from "cmdk";
+import slugify from 'slugify';
 
 
+interface Framework {
+    id: number;
+    title: string;
+    slug: string;
+    image: string;
+    imageAlt: string;
+}
 
-
-const Create = ({ categoriesList }: { categoriesList: any }) => {
+const Create = ({ categoriesList, tagsList }: { categoriesList: any, tagsList: any }) => {
     const [imageUrl, setImageUrl] = useState<string>('')
     const router = useRouter()
     const [content, setContent] = useState<string | undefined>(undefined);
@@ -69,6 +78,8 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
             metaDescription: "",
             metaTitle: "",
             categoryId: "",
+            tags: [],
+
         }
     })
 
@@ -82,8 +93,12 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
 
     const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
         setIsLoading(true)
+        const dataToSend = {
+            ...values,
+            tags: selected,
+        };
         toast.promise(
-            createPost(values),
+            createPost(dataToSend),
             {
                 loading: 'Scanning memories🧐',
                 success: (res) => <b>{res?.success} </b>,
@@ -102,13 +117,49 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
     useEffect(() => {
         const subscription = form.watch((value, { name }) => {
             if (name === "title") {
-                const slug = value.title?.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/ /g, "-") || "";
+                const slug = slugify(value.title || "", {
+                    lower: true,
+                    strict: true,
+                });
                 form.setValue("slug", slug);
             }
         });
         return () => subscription.unsubscribe();
     }, [form.watch, form]);
 
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState<Framework[]>([]);
+    const [inputValue, setInputValue] = useState("");
+
+    const handleUnselect = useCallback((framework: Framework) => {
+        setSelected((prev) => prev.filter((s) => s.id !== framework.id));
+    }, []);
+
+    const handleKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLDivElement>) => {
+            const input = inputRef.current;
+            if (input) {
+                if (e.key === "Delete" || e.key === "Backspace") {
+                    if (input.value === "") {
+                        setSelected((prev) => {
+                            const newSelected = [...prev];
+                            newSelected.pop();
+                            return newSelected;
+                        });
+                    }
+                }
+                if (e.key === "Escape") {
+                    input.blur();
+                }
+            }
+        },
+        []
+    );
+
+    const selectables = tagsList.filter(
+        (framework: any) => !selected.includes(framework)
+    );
 
 
 
@@ -234,6 +285,86 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                                 </FormItem>
                                             )}
                                         />
+                                        <FormField
+                                            control={form.control}
+                                            name="tags"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Tags</FormLabel>
+                                                    <FormControl>
+                                                        <Command
+                                                            onKeyDown={handleKeyDown}
+                                                            className="overflow-visible bg-transparent"
+                                                        >
+                                                            <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                                                                <div className="flex flex-wrap gap-1">
+                                                                    {selected.map((framework) => {
+                                                                        return (
+                                                                            <Badge key={framework.id} variant="secondary">
+                                                                                {framework.title}
+                                                                                <button
+                                                                                    className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                                                    onKeyDown={(e) => {
+                                                                                        if (e.key === "Enter") {
+                                                                                            handleUnselect(framework);
+                                                                                        }
+                                                                                    }}
+                                                                                    onMouseDown={(e) => {
+                                                                                        e.preventDefault();
+                                                                                        e.stopPropagation();
+                                                                                    }}
+                                                                                    onClick={() => handleUnselect(framework)}
+                                                                                >
+                                                                                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                                                                                </button>
+                                                                            </Badge>
+                                                                        );
+                                                                    })}
+                                                                    <CommandPrimitive.Input
+                                                                        ref={inputRef}
+                                                                        value={inputValue}
+                                                                        onValueChange={setInputValue}
+                                                                        onBlur={() => setOpen(false)}
+                                                                        onFocus={() => setOpen(true)}
+                                                                        placeholder="Select tags..."
+                                                                        className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <div className="relative mt-2">
+                                                                <CommandList>
+                                                                    {open && selectables.length > 0 ? (
+                                                                        <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+                                                                            <CommandGroup className="h-full overflow-auto">
+                                                                                {selectables.map((framework: any) => {
+                                                                                    return (
+                                                                                        <CommandItem
+                                                                                            key={framework.id}
+                                                                                            onMouseDown={(e) => {
+                                                                                                e.preventDefault();
+                                                                                                e.stopPropagation();
+                                                                                            }}
+                                                                                            onSelect={(value) => {
+                                                                                                setInputValue("");
+                                                                                                setSelected((prev) => [...prev, framework]);
+                                                                                            }}
+                                                                                            className={"cursor-pointer"}
+                                                                                        >
+                                                                                            {framework.title}
+                                                                                        </CommandItem>
+                                                                                    );
+                                                                                })}
+                                                                            </CommandGroup>
+                                                                        </div>
+                                                                    ) : null}
+                                                                </CommandList>
+                                                            </div>
+                                                        </Command>
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+
                                     </div>
                                 </CardContent>
                             </Card>
@@ -303,32 +434,44 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                     <CardTitle>Medya</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className='grid-cols-1 grid justify-center items-start gap-4'>
-                                        <div >
-                                            <div
-                                                className='bg-black text-white'
-                                                data-ut-element="button"
-                                            >
-                                                <UploadButton
-                                                    className="mt-4 ut-button:bg-red-500 ut-button:ut-readying:bg-red-500/50"
-                                                    endpoint="imageUploader"
-                                                    onClientUploadComplete={(res) => {
-                                                        console.log("Files: ", res);
-                                                        setImageUrl(res[0].url)
-                                                        form.setValue('image', res[0].url)
-                                                        alert("Upload Completed");
-                                                    }}
-                                                    onUploadError={(error: Error) => {
-                                                        alert(`ERROR! ${error.message}`);
-                                                    }}
-                                                />
-                                                {imageUrl.length ? <div>
-                                                    <Image src={imageUrl} className='w-auto h-auto' alt='image' width={300} height={300} />
-                                                </div> : "no image"}
+                                    <div className='grid-cols-2 grid justify-center items-start gap-4'>
+                                        <div
+                                            className='bg-black text-white'
+                                            data-ut-element="button"
+                                        >
+                                            <UploadButton
+                                                className="mt-4 ut-button:bg-red-500 ut-button:ut-readying:bg-red-500/50"
+                                                endpoint="imageUploader"
+                                                onClientUploadComplete={(res) => {
+                                                    console.log("Files: ", res);
+                                                    setImageUrl(res[0].url)
+                                                    form.setValue('image', res[0].url)
+                                                    alert("Upload Completed");
+                                                }}
+                                                onUploadError={(error: Error) => {
+                                                    alert(`ERROR! ${error.message}`);
+                                                }}
+                                            />
+                                            {imageUrl.length ? <div>
+                                                <Image src={imageUrl} className='w-auto h-auto' alt='image' width={300} height={300} />
+                                            </div> : "no image"}
 
-                                            </div>
                                         </div>
-
+                                        <div>
+                                            <FormField
+                                                control={form.control}
+                                                name="imageAlt"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>image alt metin</FormLabel>
+                                                        <FormControl>
+                                                            <Input disabled={isLoading} {...field} placeholder='Image alt' type='text' value={field.value || ''} />
+                                                        </FormControl>
+                                                        <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
