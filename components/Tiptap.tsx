@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Button } from './ui/button';
 import { Color } from '@tiptap/extension-color'
-import { Bold, Italic, Underline, List } from "lucide-react"
+import { Bold, Italic, List, SquareM } from "lucide-react"
 import Image from '@tiptap/extension-image'
 import TextStyle from '@tiptap/extension-text-style'
 import ListItem from '@tiptap/extension-list-item'
@@ -15,16 +15,25 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { Heading1, FileImage, Strikethrough, AlignLeft, AlignRight, AlignCenter, AlignJustify, Table } from 'lucide-react';
+import { Heading1, FileImage, Strikethrough, AlignLeft, AlignRight, AlignCenter, AlignJustify, Table, Highlighter } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import TextAlign from '@tiptap/extension-text-align'
 import Highlight from '@tiptap/extension-highlight'
 import CharacterCount from '@tiptap/extension-character-count'
 import Placeholder from '@tiptap/extension-placeholder'
+import Text from '@tiptap/extension-text'
+import Underline from '@tiptap/extension-underline'
+import Link from '@tiptap/extension-link'
 
 const limit = 600
 
 const extensions = [
+    TextStyle, Underline,
+    Link.configure({
+        openOnClick: true,
+        autolink: true,
+        defaultProtocol: 'https',
+    }),
     CharacterCount.configure({
         limit,
     }),
@@ -37,7 +46,6 @@ const extensions = [
         types: ['heading', 'paragraph'],
     }),
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
-    TextStyle.configure(),
     Image,
     Highlight,
     StarterKit.configure({
@@ -51,6 +59,8 @@ const extensions = [
         },
     }),
 ]
+
+
 const Tiptap: React.FC<{ onChange?: (content: any) => void; editable: boolean; initialContent?: any }> = ({ onChange, initialContent, editable }) => {
     const editor = useEditor({
         immediatelyRender: false,
@@ -74,6 +84,28 @@ const Tiptap: React.FC<{ onChange?: (content: any) => void; editable: boolean; i
             editor.setEditable(editable);
         }
     }, [editable, editor]);
+
+    const setLink = useCallback(() => {
+        const previousUrl = editor?.getAttributes('link').href
+        const url = window.prompt('URL', previousUrl)
+
+        // cancelled
+        if (url === null) {
+            return
+        }
+
+        // empty
+        if (url === '') {
+            editor?.chain().focus().extendMarkRange('link').unsetLink()
+                .run()
+
+            return
+        }
+
+        // update link
+        editor?.chain().focus().extendMarkRange('link').setLink({ href: url })
+            .run()
+    }, [editor])
 
     if (!editor) {
         return null
@@ -132,6 +164,10 @@ const Tiptap: React.FC<{ onChange?: (content: any) => void; editable: boolean; i
                                         className={editor.isActive('strike') ? 'is-active' : ''} value="strike" aria-label="strike">
                                         <Strikethrough className="h-4 w-4" />
                                     </ToggleGroupItem>
+                                    <ToggleGroupItem onClick={() => editor.chain().focus().toggleUnderline().run()}
+                                        className={editor.isActive('underline') ? 'is-active' : ''} value="unde" aria-label="unde">
+                                        <SquareM className="h-4 w-4" />
+                                    </ToggleGroupItem>
                                     <ToggleGroupItem onClick={() => editor.chain().focus().setTextAlign('left').run()} className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''} value="alignl" aria-label="alignl">
                                         <AlignLeft className="h-4 w-4" />
                                     </ToggleGroupItem>
@@ -142,8 +178,17 @@ const Tiptap: React.FC<{ onChange?: (content: any) => void; editable: boolean; i
                                         <AlignRight className="h-4 w-4" />
                                     </ToggleGroupItem>
                                     <ToggleGroupItem onClick={() => editor.chain().focus().toggleHighlight().run()} className={editor.isActive('highlight') ? 'is-active' : ''} value="highlight" aria-label="highlight">
-                                        <AlignRight className="h-4 w-4" />
+                                        <Highlighter className="h-4 w-4" />
                                     </ToggleGroupItem>
+                                    <button type="button" onClick={setLink} className={editor.isActive('link') ? 'is-active' : ''}>
+                                        Set link
+                                    </button>
+                                    <button type="button"
+                                        onClick={() => editor.chain().focus().unsetLink().run()}
+                                        disabled={!editor.isActive('link')}
+                                    >
+                                        Unset link
+                                    </button>
                                 </ToggleGroup>
 
                             </div>
@@ -221,11 +266,21 @@ const Tiptap: React.FC<{ onChange?: (content: any) => void; editable: boolean; i
                             value="bullet" aria-label="">
                             <List className="h-4 w-4" />
                         </ToggleGroupItem>
+
                         <ToggleGroupItem onClick={() => editor.chain().focus().toggleOrderedList().run()}
                             className={editor.isActive('orderedList') ? 'is-active' : ''}
                             value="numb" aria-label="">
                             <AlignJustify className="h-4 w-4" />
                         </ToggleGroupItem>
+                        <input
+                            type="color"
+                            onInput={event => {
+                                const inputElement = event.target as HTMLInputElement;
+                                editor.chain().focus().setColor(inputElement.value).run();
+                            }}
+                            value={editor.getAttributes('textStyle').color}
+                            data-testid="setColor"
+                        />
 
                     </ToggleGroup>
 

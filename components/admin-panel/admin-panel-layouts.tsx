@@ -32,7 +32,7 @@ export default function AdminPanelLayout({
                     sidebar?.isOpen === false ? "lg:ml-[90px]" : "lg:ml-72"
                 )}
             >
-                <Footer />
+                {/* <Footer /> */}
             </footer>
         </>
     );

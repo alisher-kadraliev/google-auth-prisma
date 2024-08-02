@@ -43,8 +43,13 @@ import {
 import { cn } from '@/lib/utils'
 import Tiptap from '@/components/Tiptap'
 import { createPost } from '@/actions/Post'
-const Create = ({ categoriesList }: { categoriesList: any }) => {
+import { UploadButton } from "@/utils/uploadthing";
 
+
+
+
+const Create = ({ categoriesList }: { categoriesList: any }) => {
+    const [imageUrl, setImageUrl] = useState<string>('')
     const router = useRouter()
     const [content, setContent] = useState<string | undefined>(undefined);
 
@@ -76,7 +81,6 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
     }, [content, setValue]);
 
     const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
-
         setIsLoading(true)
         toast.promise(
             createPost(values),
@@ -138,6 +142,7 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Basic Information</CardTitle>
+
                                 </CardHeader>
                                 <CardContent>
                                     <div className='grid-cols-2 max-lg:grid-cols-1 grid justify-center mx-auto gap-4'>
@@ -298,7 +303,32 @@ const Create = ({ categoriesList }: { categoriesList: any }) => {
                                     <CardTitle>Medya</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className='grid-cols-2 grid justify-center items-start gap-4'>
+                                    <div className='grid-cols-1 grid justify-center items-start gap-4'>
+                                        <div >
+                                            <div
+                                                className='bg-black text-white'
+                                                data-ut-element="button"
+                                            >
+                                                <UploadButton
+                                                    className="mt-4 ut-button:bg-red-500 ut-button:ut-readying:bg-red-500/50"
+                                                    endpoint="imageUploader"
+                                                    onClientUploadComplete={(res) => {
+                                                        console.log("Files: ", res);
+                                                        setImageUrl(res[0].url)
+                                                        form.setValue('image', res[0].url)
+                                                        alert("Upload Completed");
+                                                    }}
+                                                    onUploadError={(error: Error) => {
+                                                        alert(`ERROR! ${error.message}`);
+                                                    }}
+                                                />
+                                                {imageUrl.length ? <div>
+                                                    <Image src={imageUrl} className='w-auto h-auto' alt='image' width={300} height={300} />
+                                                </div> : "no image"}
+
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </CardContent>
                             </Card>

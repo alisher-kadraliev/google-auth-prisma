@@ -119,3 +119,8 @@
   min-height: 500px;
   
 }  
+.prose a {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
