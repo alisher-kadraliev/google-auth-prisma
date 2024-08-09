@@ -2,7 +2,6 @@ import db from '@/lib/db'
 import { notFound } from 'next/navigation'
 import { Card, CardContent } from "@/components/ui/card"
 import { ContentLayout } from '@/components/admin-panel/content-layout'
-import Tiptap from '@/components/Tiptap'
 import Image from 'next/image'
 
 type PageProps = {

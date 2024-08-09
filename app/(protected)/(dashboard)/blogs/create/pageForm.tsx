@@ -1,6 +1,6 @@
 "use client"
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreatePostSchema } from '@/schemas/post'
 import { Button } from "@/components/ui/button"
@@ -41,13 +41,16 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from '@/lib/utils'
-import Tiptap from '@/components/Tiptap'
 import { createPost } from '@/actions/Post'
-import { UploadButton } from "@/utils/uploadthing";
+import { UploadButton } from "@/utils/uploadthing"
 import { Badge } from '@/components/ui/badge'
-import { Command as CommandPrimitive } from "cmdk";
-import slugify from 'slugify';
-
+import { Command as CommandPrimitive } from "cmdk"
+import slugify from 'slugify'
+import "@blocknote/core/fonts/inter.css"
+import { useCreateBlockNote } from "@blocknote/react"
+import { BlockNoteView } from "@blocknote/mantine"
+import "@blocknote/mantine/style.css"
+import { useTheme } from 'next-themes'
 
 interface Framework {
     id: number;
@@ -57,10 +60,18 @@ interface Framework {
     imageAlt: string;
 }
 
+
+async function uploadLocalFile(file: File) {
+    // Convert file to a local URL
+    const localURL = URL.createObjectURL(file);
+
+    // Return the local URL
+    return localURL;
+}
 const Create = ({ categoriesList, tagsList }: { categoriesList: any, tagsList: any }) => {
     const [imageUrl, setImageUrl] = useState<string>('')
     const router = useRouter()
-    const [content, setContent] = useState<string | undefined>(undefined);
+    const [contentS, setContent] = useState("");
 
     const form = useForm<z.infer<typeof CreatePostSchema>>({
         resolver: zodResolver(CreatePostSchema),
@@ -86,21 +97,27 @@ const Create = ({ categoriesList, tagsList }: { categoriesList: any, tagsList: a
     const [isLoading, setIsLoading] = useState(false)
     const { title, metaTitle, metaDescription, slug } = form.watch();
     const { setValue, control } = form;
+    const { resolvedTheme } = useTheme()
 
-    useEffect(() => {
-        setValue('content', JSON.stringify(content));
-    }, [content, setValue]);
-
+    const editor = useCreateBlockNote({
+        uploadFile: uploadLocalFile,
+    });
+    const onChange = async () => {
+        const html = await editor.blocksToHTMLLossy(editor.document);
+        setContent(html);
+    };
     const onSubmit = async (values: z.infer<typeof CreatePostSchema>) => {
+
         setIsLoading(true)
         const dataToSend = {
             ...values,
+            content: contentS,
             tags: selected,
         };
         toast.promise(
             createPost(dataToSend),
             {
-                loading: 'Scanning memories🧐',
+                loading: 'Scanning 🧐 please wait',
                 success: (res) => <b>{res?.success} </b>,
                 error: (res) => <b>{res.error} </b>,
             }
@@ -210,19 +227,7 @@ const Create = ({ categoriesList, tagsList }: { categoriesList: any, tagsList: a
                                                 </FormItem>
                                             )}
                                         />
-                                        {/* <FormField
-                                            control={form.control}
-                                            name="content"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Title</FormLabel>
-                                                    <FormControl>
-                                                        <Input disabled={isLoading}  {...field} placeholder='Write your post title' type='text' value={field.value || ""} />
-                                                    </FormControl>
-                                                    <FormMessage className='bg-destructive/15 text-destructive py-1 px-2 rounded-lg dark:text-red-500 dark:bg-none' />
-                                                </FormItem>
-                                            )}
-                                        /> */}
+
 
                                         <FormField
                                             control={form.control}
@@ -443,10 +448,10 @@ const Create = ({ categoriesList, tagsList }: { categoriesList: any, tagsList: a
                                                 className="mt-4 ut-button:bg-red-500 ut-button:ut-readying:bg-red-500/50"
                                                 endpoint="imageUploader"
                                                 onClientUploadComplete={(res) => {
-                                                    console.log("Files: ", res);
+
                                                     setImageUrl(res[0].url)
                                                     form.setValue('image', res[0].url)
-                                                    alert("Upload Completed");
+
                                                 }}
                                                 onUploadError={(error: Error) => {
                                                     alert(`ERROR! ${error.message}`);
@@ -480,18 +485,7 @@ const Create = ({ categoriesList, tagsList }: { categoriesList: any, tagsList: a
                                     <CardTitle>Post Details</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <Controller
-                                        name="content"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <Tiptap
-                                                editable={true}
-                                                initialContent={field.value || ''}
-                                                onChange={(content) => setContent(content)}
-                                            />
-                                        )}
-                                    />
-
+                                    <BlockNoteView editor={editor} onChange={onChange} theme={resolvedTheme === "dark" ? "dark" : "light"} />
                                 </CardContent>
                             </Card>
                         </form>

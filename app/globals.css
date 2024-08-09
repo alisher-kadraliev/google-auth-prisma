@@ -68,59 +68,7 @@
   }
 }
 .bn-editor{
-  min-height: 610px;
+  min-height: 910px;
+  background-color: transparent!important;
 }
 
-
-.tiptap :first-child {
-  margin-top: 0;
-}
-
-@layer base {
-  .prose h1 {
-    @apply text-4xl font-bold;
-  }
-  .prose h2 {
-    @apply text-3xl font-bold;
-  }
-  .prose h3 {
-    @apply text-2xl font-bold;
-  }
-  .prose h4 {
-    @apply text-xl font-bold;
-  }
-
-}
- .prose mark {
-    background-color: #FAF594;
-    border-radius: 0.4rem;
-    box-decoration-break: clone;
-    padding: 0.1rem 0.3rem;
-  }
-.prose  ul { 
-    display: block;
-    list-style-type: disc;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 40px;
-}
-.prose  ol { 
-    display: block;
-    list-style-type: decimal;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 40px;
-}
-.test-d{
-  min-height: 500px;
-  
-}  
-.prose a {
-    text-decoration: underline;
-    color: #ff642d;
-    cursor: pointer;
-}

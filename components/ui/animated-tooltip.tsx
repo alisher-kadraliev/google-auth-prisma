@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
+import fallbackImg from "@/public/fallback.svg"
 import {
     motion,
     useTransform,
@@ -10,15 +11,16 @@ import {
 } from "framer-motion";
 interface TooltipProps {
     item: {
-        name: string;
-        image: string;
-        id: number;
+        name: string | null;
+        email: string | null;
+        image: string | null;
+        id: string;
     };
 }
 export const AnimatedTooltip = ({
     item
 }: TooltipProps) => {
-    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<string | null>(null);
     const springConfig = { stiffness: 100, damping: 5 };
     const x = useMotionValue(0); // going to set this value on mouse move
     // rotate the tooltip
@@ -35,6 +37,7 @@ export const AnimatedTooltip = ({
         const halfWidth = event.target.offsetWidth / 2;
         x.set(event.nativeEvent.offsetX - halfWidth); // set the x value, which is then used in transform and rotate
     };
+
 
     return (
         <>
@@ -69,7 +72,7 @@ export const AnimatedTooltip = ({
                             <div className="absolute inset-x-10 z-30 w-[20%] -bottom-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent h-px " />
                             <div className="absolute left-10 w-[40%] z-30 -bottom-px bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px " />
                             <div className="font-bold text-white relative z-30 text-base">
-                                {item.name}
+                                {item.email}
                             </div>
                         </motion.div>
                     )}
@@ -78,8 +81,8 @@ export const AnimatedTooltip = ({
                     onMouseMove={handleMouseMove}
                     height={100}
                     width={100}
-                    src={item.image}
-                    alt={item.name}
+                    src={item.image || fallbackImg}
+                    alt={item.name || "image alt"}
                     className="object-cover !m-0 !p-0 object-top rounded-full h-14 w-14 border-2 group-hover:scale-105 group-hover:z-30 border-white  relative transition duration-500"
                 />
             </div>

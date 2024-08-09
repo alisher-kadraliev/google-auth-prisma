@@ -33,6 +33,8 @@
     "@radix-ui/react-tooltip": "^1.1.2",
     "@tabler/icons-react": "^3.11.0",
     "@tanstack/react-table": "^8.19.3",
+    "@tiptap-pro/extension-table-of-contents": "^2.10.7",
+    "@tiptap-pro/extension-unique-id": "^2.10.7",
     "@tiptap/extension-bullet-list": "^2.5.8",
     "@tiptap/extension-character-count": "^2.5.8",
     "@tiptap/extension-color": "^2.5.8",

@@ -20,13 +20,13 @@ const Header = () => {
         <header className="absolute inset-x-0 top-0 z-50">
             <nav aria-label="Global" className="flex items-center justify-between p-6">
                 <div className="flex lg:flex-1">
-                    <a href="#" className="-m-1.5 p-1.5">
-                        <span className="sr-only">Your Company</span>
+                    <a href="/" className="-m-1.5 p-1.5">
+                        <span className="sr-only">English learn</span>
                         <Image
                             alt="logo"
                             src={logo}
-                            className="h-20 w-auto rounded-full"
-                            width={100}
+                            className="h-16 w-auto rounded-full"
+                            width={50}
                             height={50}
                         />
                     </a>

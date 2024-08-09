@@ -28,19 +28,19 @@ const LoginPage = async () => {
                 <CardHeader>
                     <CardTitle className="text-2xl">Login</CardTitle>
                 </CardHeader>
-               <LoginForm/>
-                {/* <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t"></span></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">Or continue with</span></div></div>
+                <LoginForm />
+                <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t"></span></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">Or continue with</span></div></div>
                 <br />
                 <CardFooter>
-                    <form className="w-full border rounded-lg flex justify-center items-center"
+                    {/* <form className="w-full border rounded-lg flex justify-center items-center"
                         action={async () => {
                             "use server"
                             await signIn("google", { redirectTo: "/dashboard" })
                         }}
                     >
-                        <button type="submit" className="p-2"><FcGoogle size={30} /></button>
-                    </form>
-                </CardFooter> */}
+                        <button type="submit" className="p-2 w-full flex mx-auto justify-center items-center"><FcGoogle size={30} /></button>
+                    </form> */}
+                </CardFooter>
             </Card>
         </div>
     )
